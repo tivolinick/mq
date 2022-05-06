@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#uncommnet below for extra messages
+#debug=1
+
+# set default number of QMGRs
+max=6
+if [ $# -ne 0 ] ; then
+  max=$1
+fi
 
 createQMGR() {
   num=$1	
@@ -30,7 +38,7 @@ configQMGR() {
     next=$(expr $curr + 1)
   fi
 
-  echo "$prev $curr $next MAX:$max"
+  [ $debug ] && echo "$prev $curr $next MAX:$max"
 
 
 
@@ -56,37 +64,37 @@ configQMGR() {
     bprev=BT
     bnext=FT
     if [ $rq -eq $prev ] ; then
-    echo 'bprev=T'
+    [ $debug ] && echo 'bprev=T'
     bprev=T
     fi
     if [ $rq -eq $next ] ; then
-    echo 'bnext=T'
+    [ $debug ] && echo 'bnext=T'
     bnext=T
     fi
-echo "PREV:$prev:$bprev NEXT:$next:$bnext J:$j HALF:$half"
+    [ $debug ] && echo "PREV:$prev:$bprev NEXT:$next:$bnext J:$j HALF:$half"
     if [ $j -le $half ] ; then
-      echo FIRST
+      [ $debug ] && echo FIRST
       cmd="$cmd ${NL} \
       DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next}) ${NL} \
       DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next}) ${NL} \
       DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
-      echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
-      echo "DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
-      echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
+      [ $debug ] && echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
+      [ $debug ] && echo "DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
+      [ $debug ] && echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
 
     else
-      echo SECOND
+      [ $debug ] && echo SECOND
       cmd="$cmd ${NL}
       DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev}) ${NL}
       DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next}) ${NL} \
       DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
-      echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
-      echo "DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
-      echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
+      [ $debug ] && echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
+      [ $debug ] && echo "DEFINE QREMOTE(FT${rq}) RNAME(${bnext}${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
+      [ $debug ] && echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
     fi
   
   done
-  echo CMD: $cmd
+  [ $debug ] && echo CMD: $cmd
   prevport=$(expr 1520 + $prev)
   nextport=$(expr 1520 + $next)
 
@@ -106,8 +114,7 @@ echo "PREV:$prev:$bprev NEXT:$next:$bnext J:$j HALF:$half"
 @
 }
 
-max=6
-
+# ===== MAIN =====
 for (( i = 1; $i <= $max; i += 1 )) ; do
   createQMGR $i
   configQMGR $i $max

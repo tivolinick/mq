@@ -1,4 +1,9 @@
+#!/bin/bash
 max=6
+if [ $# -ne 0 ] ; then
+  max=$1
+fi
+
 #dspmq -l
 #114  DISPLAY CHANNEL(*) CHTYPE(SDR) XMITQ(SND.TO.RCV)
 #108  display CHSTATUS(SND.TO.RCV)

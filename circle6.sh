@@ -1,6 +1,13 @@
 #!/bin/bash
 
+#uncommnet below for extra messages
+#debug=1
+
+# set default number of QMGRs
 max=6
+if [ $# -ne 0 ] ; then
+  max=$1
+fi
 
 createQMGR() {
   num=$1	
@@ -31,7 +38,7 @@ configQMGR() {
     next=$(expr $curr + 1)
   fi
 
-  echo "$prev $curr $next MAX:$max"
+  [ $debug ] && echo "$prev $curr $next MAX:$max"
 
   # Setup QMGR TEST${curr}
   # Local Q to receive messages
@@ -53,19 +60,19 @@ configQMGR() {
     bprev=BT
     bnext=BT
     if [ $rq -eq $prev ] ; then
-    echo 'bprev=T'
+    [ $debug ] && echo 'bprev=T'
     bprev=T
     fi
-echo "PREV:$prev:$bprev"
-    echo FIRST
+    [ $debug ] && echo "PREV:$prev:$bprev"
+    [ $debug ] && echo FIRST
     cmd="$cmd ${NL} \
     DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next}) ${NL} \
     DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
-    echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
-    echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
+    [ $debug ] && echo "DEFINE QREMOTE(T${rq}) RNAME(T${rq}) RQMNAME(TEST${next}) XMITQ(T${curr}.T${next})"
+    [ $debug ] && echo "DEFINE QREMOTE(BT${rq}) RNAME(${bprev}${rq}) RQMNAME(TEST${prev}) XMITQ(T${curr}.T${prev})"
 
   done
-  echo CMD: $cmd
+  [ $debug ] && echo CMD: $cmd
   prevport=$(expr 1520 + $prev)
   nextport=$(expr 1520 + $next)
 

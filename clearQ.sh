@@ -13,16 +13,21 @@ depth=$((runmqsc TEST${1} << EOF
   DISPLAY QLOCAL(T${1}) CURDEPTH
 EOF
 ) | grep 'CURDEPTH(' | sed 's/.*(\(.*\)).*/\1/')
+
+if [ "$depth" == '' ] ; then
+  echo "T${1} Error: couldn't get depth, quitting"
+  exit
+fi
 echo "T${1} Initial Queue Depth $depth"
 
-while [ $depth != 0 ] ; do
+while [ $depth -ne 0 ] ; do
 depth=$((runmqsc TEST${1} << EOF
   CLEAR QLOCAL(T${1})
   DISPLAY QLOCAL(T${1}) CURDEPTH
 EOF
 ) | grep 'CURDEPTH(' | sed 's/.*(\(.*\)).*/\1/')
 echo "T${1} Queue Depth Now $depth"
-if [ $depth != 0 ] ; then
+if [ $depth -ne 0 ] ; then
   echo "T${1} sleeping..."
   sleep 10
 fi
