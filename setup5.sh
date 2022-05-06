@@ -1,6 +1,5 @@
 #!/bin/sh
 
-# stop and delete QMGRs in case there have beencreated before
 endmqm TEST1
 endmqm TEST2
 endmqm TEST3
@@ -13,25 +12,19 @@ dltmqm TEST3
 dltmqm TEST4
 dltmqm TEST5
 
-# Create the 5 QMGRs
 crtmqm -p 1521 TEST1
 crtmqm -p 1522 TEST2
 crtmqm -p 1523 TEST3
 crtmqm -p 1524 TEST4
 crtmqm -p 1525 TEST5
 
-# Start them up
 strmqm TEST1
 strmqm TEST2
 strmqm TEST3
 strmqm TEST4
 strmqm TEST5
 
-# Setup QMGR TEST1
-# Local Q to receive messages
-# Transmission Q
-# Remote Q to send messages to TEST2
-# Send and Receive channel
+
 runmqsc TEST1 << @
 DEFINE QLOCAL(T1)
 DEFINE QLOCAL(T1.T2) USAGE(XMITQ)
@@ -41,10 +34,6 @@ DEFINE CHANNEL(T2.T1) CHLTYPE(RCVR)
 START CHANNEL(T1.T2)
 @
 
-# Setup QMGR TEST2
-# 2 Transmission Qs
-# 2 Remote Q
-# 2 sender and 2 receiver Channels
 runmqsc TEST2 << @
 DEFINE QLOCAL(T2.T3) USAGE(XMITQ)
 DEFINE QLOCAL(T2.T1) USAGE(XMITQ)
@@ -58,10 +47,6 @@ START CHANNEL(T2.T3)
 START CHANNEL(T2.T1)
 @
 
-# Setup QMGR TEST3
-# 2 Transmission Qs
-# 2 Remote Q
-# 2 sender and 2 receiver Channels
 runmqsc TEST3 << @
 DEFINE QLOCAL(T3.T4) USAGE(XMITQ)
 DEFINE QLOCAL(T3.T2) USAGE(XMITQ)
@@ -75,10 +60,6 @@ START CHANNEL(T3.T4)
 START CHANNEL(T3.T2)
 @
 
-# Setup QMGR TEST4
-# 2 Transmission Qs
-# 2 Remote Q
-# 2 sender and 2 receiver Channels
 runmqsc TEST4 << @
 DEFINE QLOCAL(T4.T5) USAGE(XMITQ)
 DEFINE QLOCAL(T4.T3) USAGE(XMITQ)
@@ -92,11 +73,6 @@ START CHANNEL(T4.T5)
 START CHANNEL(T4.T3)
 @
 
-# Setup QMGR TEST1
-# Local Q to receive messages
-# Transmission Q
-# Remote Q to send messages to TEST4
-# Send and Receive channel
 runmqsc TEST5 << @
 DEFINE QLOCAL(T5.T4) USAGE(XMITQ)
 DEFINE QLOCAL(T5)
