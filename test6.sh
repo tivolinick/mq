@@ -24,7 +24,7 @@ EOF
 done
 
 
-
+sleep 10
 
 for (( i = 1; $i <= $max; i += 1 )) ; do
   depth=$((runmqsc TEST${i} << @

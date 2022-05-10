@@ -1,9 +1,9 @@
 #!/bin/bash
-max=6
+
 if [ $# -ne 0 ] ; then
   max=$1
 fi
-
+max=11
 #dspmq -l
 #114  DISPLAY CHANNEL(*) CHTYPE(SDR) XMITQ(SND.TO.RCV)
 #108  display CHSTATUS(SND.TO.RCV)
@@ -13,27 +13,19 @@ for (( i = 1; $i <= $max; i += 1 )) ; do
     if [ $i -eq $j ] ; then
       continue
     fi
-
-echo "FROM TEST${i} for T${j}"
+    echo ============================================================
     /opt/mqm92/samp/bin/amqsput T${j} TEST${i} << EOF
 FROM TEST${i} for T${j}
 EOF
-
-echo "FROM TEST${i} for FT${j}"
-    /opt/mqm92/samp/bin/amqsput FT${j} TEST${i} << EOF
-FROM TEST${i} for FT${j}
-EOF
-
-echo "FROM TEST${i} for BT${j}"
-    /opt/mqm92/samp/bin/amqsput BT${j} TEST${i} << EOF
-FROM TEST${i} for BT${j}
-EOF
+#    /opt/mqm92/samp/bin/amqsput BT${j} TEST${i} << EOF
+#FROM TEST${i} for BT${j}
+#EOF
 
   done
 done
 
-sleep 10
 
+sleep 10
 
 for (( i = 1; $i <= $max; i += 1 )) ; do
   depth=$((runmqsc TEST${i} << @
