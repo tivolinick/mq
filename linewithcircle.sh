@@ -142,11 +142,10 @@ configQMGRline() {
     START CHANNEL(T${curr}.T${prev})"
   fi
 
-#   runmqsc TEST${curr} << @
-#   DEFINE QLOCAL(T${curr})
-#   $cmd
-# @
-# }
+ runmqsc TEST${curr} << EOF1
+ DEFINE QLOCAL(T${curr})
+ $cmd
+EOF1
 
 }
 
@@ -261,7 +260,7 @@ configQMGR() {
   prevport=$(expr 1520 + $prev)
   nextport=$(expr 1520 + $next)
 
-  runmqsc TEST${curr} << @
+  runmqsc TEST${curr} << EOF2
   DEFINE QLOCAL(T${curr})
 
   DEFINE QLOCAL(T${curr}.T${next}) USAGE(XMITQ)
@@ -275,7 +274,7 @@ configQMGR() {
   START CHANNEL(T${curr}.T${prev})
   START CHANNEL(T${curr}.T${next})
   $cmd
-@
+EOF2
 }
 
 # Number of steps from the junction to the target in the circle
@@ -345,15 +344,15 @@ for (( i = 1; $i <= $max; i += 1 )) ; do
   [ $debug ] && echo create $i
   echo "JUNCTION: $i,${junctions[$i]}"
 
-  #createQMGR $i
+  createQMGR $i
 done
 
 for (( i = 1; $i < $start; i += 1 )) ; do
   configQMGRline $i $start $max
+  #echo 'line $1'
 done
 for (( i = $start; $i <= $max; i += 1 )) ; do
-  # configQMGR $i $start $max
-  echo 'circle $1'
+   configQMGR $i $start $max
+  #echo 'circle $1'
 done
-exit
 
