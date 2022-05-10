@@ -3,7 +3,7 @@
 junctions=(0 10 0 6 0 8 3 0 5 0 1 0)
 
 #uncommnet below for extra messages
-debug=1
+#debug=1
 
 # set start of circle
 start=6
@@ -35,13 +35,12 @@ createQMGR() {
   # Send and Receive channel
 
 configQMGRline() {
-  # echo line${1}
   curr=$1
   start=$2
   max=$3
   # number of QMGRs
   qm=$(expr $max - $start + 1)
-  echo QMGR:$curr
+  [ $debug ] && echo QMGR:$curr
   # work out previous QMGR
   prev=$(expr $curr - 1)
   
@@ -58,9 +57,9 @@ configQMGRline() {
   for (( j = 6; $j <= 11; j += 1 )) ; do
     route=$(calcRoute $curr $j | cut -d ':' -f1)
     extras[$route]="${extras[$route]} $j"
-    echo "$curr $j $route"
+    [ $debug ] && echo "$curr $j $route"
   done
-  echo EXTRAS:${extras[@]}
+  [ $debug ] && echo EXTRAS:${extras[@]}
 
   cmd=''
   NL=$'\n'
@@ -96,7 +95,7 @@ configQMGRline() {
     if [ $rq -gt 5 ] ; then
       rq=$(expr $rq - 5)
     fi
-    echo "CURR:$curr RQ:$rq NEXT:$next"
+    [ $debug ] && echo "CURR:$curr RQ:$rq NEXT:$next"
 
     if [ $rq -gt $curr -a $next -ne 0 ] ; then
       cmd="$cmd ${NL} \
@@ -170,7 +169,7 @@ configQMGR() {
   max=$3
   # number of QMGRs
   qm=$(expr $max - $start + 1)
-  echo QMGR:$curr
+  [ $debug ] && echo QMGR:$curr
   # work out previous QMGR
   if [ $curr -eq $start ] ; then
     prev=$max
@@ -192,9 +191,9 @@ configQMGR() {
   for (( j = 1; $j <= 5; j += 1 )) ; do
     route=$(calcRoute $curr $j | cut -d ':' -f2)
     extras[$route]="${extras[$route]} $j"
-    echo "$curr $j $route"
+    [ $debug ] && echo "$curr $j $route"
   done
-  echo EXTRAS:${extras[@]}
+  [ $debug ] && echo EXTRAS:${extras[@]}
   # return
 
   cmd=''
@@ -329,20 +328,15 @@ calcRoute() {
       else
         junc=$(expr $from + 1)
       fi
-      # echo "$j: HARD BIT $closeP,$closeN"
       echo "$junc:${junctions[$junc]}"
     fi
 }
-
-# for r in $(calcRoute $1 $2) ; do
-#   echo $r
-# done
 
 
 # ===== MAIN =====
 for (( i = 1; $i <= $max; i += 1 )) ; do
   [ $debug ] && echo create $i
-  echo "JUNCTION: $i,${junctions[$i]}"
+  [ $debug ] && echo "JUNCTION: $i,${junctions[$i]}"
 
   createQMGR $i
 done
